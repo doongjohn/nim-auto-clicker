@@ -1,4 +1,6 @@
 switch("threads", "on")
+switch("excessiveStackTrace", "off")
+switch("threads", "on")
 switch("opt", "size")
 switch("passL", "-s")
 switch("app", "gui")
