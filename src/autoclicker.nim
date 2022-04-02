@@ -7,9 +7,9 @@ import strformat
 import wkeynames
 import winim
 import wNim/[
-    wApp, wIcon, wFrame, wPanel, wFont,
-    wStaticBox, wStaticText,
-    wButton, wSpinCtrl, wComboBox]
+  wApp, wIcon, wFrame, wPanel, wFont,
+  wStaticBox, wStaticText,
+  wButton, wSpinCtrl, wComboBox]
 
 
 # -------------------------------------------------------------------
@@ -32,16 +32,21 @@ var clickDelay = 20 .. 20
 var clickHoldTime = 30 .. 30
 
 proc hasToClickKey(): bool =
-  toClickKey.mouse != MouseKeyType.None or
-  toClickKey.keyboard != 0
-proc hasKeyConflictMouse(): bool = 
-  triggerKey.mouse != MouseKeyType.None and
-  toClickKey.mouse != MouseKeyType.None and
-  triggerKey.mouse == toClickKey.mouse
-proc hasKeyConflictKeyboard(): bool = 
-  triggerKey.keyboard != 0 and
-  toClickKey.keyboard != 0 and
-  triggerKey.keyboard == toClickKey.keyboard
+  return
+    toClickKey.mouse != MouseKeyType.None or
+    toClickKey.keyboard != 0
+
+proc hasKeyConflictMouse(): bool =
+  return
+    triggerKey.mouse != MouseKeyType.None and
+    toClickKey.mouse != MouseKeyType.None and
+    triggerKey.mouse == toClickKey.mouse
+
+proc hasKeyConflictKeyboard(): bool =
+  return
+    triggerKey.keyboard != 0 and
+    toClickKey.keyboard != 0 and
+    triggerKey.keyboard == toClickKey.keyboard
 
 
 # -------------------------------------------------------------------
@@ -81,7 +86,12 @@ let spc_ClickHoldTime_Max = SpinCtrl(panel, value=clickHoldTime.b, style=wSpArro
 let box_Trigger = StaticBox(panel, label="Trigger Key (Toggle)")
 let box_ToClick = StaticBox(panel, label="Click Key")
 
-const mouseKeyChoices = ["None", "Mouse: Left Click", "Mouse: Right Click", "Mouse: Middle Click"]
+const mouseKeyChoices = [
+  "None",
+  "Mouse: Left Click",
+  "Mouse: Right Click",
+  "Mouse: Middle Click"
+]
 let cbb_Trigger = ComboBox(panel, value="None", choices=mouseKeyChoices, style=wCbReadOnly)
 let cbb_ToClick = ComboBox(panel, value="None", choices=mouseKeyChoices, style=wCbReadOnly)
 
@@ -101,11 +111,11 @@ proc layout() =
        -[box_ClickHoldTime(50)]
        -[box_Trigger(120)]
        -[box_ToClick(120)]-|
-    
+
     outer: box_Info
     H:|-[txt_Info]-|
     V:|-[txt_Info]-|
-    
+
     outer: box_Status
     H:|-[txt_AutoClickStatus]-|
     V:|-[txt_AutoClickStatus]-|
@@ -121,7 +131,7 @@ proc layout() =
     outer: box_Trigger
     H:|-[cbb_Trigger, btn_Trigger]-|
     V:|-[cbb_Trigger]-[btn_Trigger]-|
-    
+
     outer: box_ToClick
     H:|-[cbb_ToClick, btn_ToClick]-|
     V:|-[cbb_ToClick]-[btn_ToClick]-|
@@ -334,7 +344,7 @@ proc autoClickThreadProc() {.thread.} =
   var mouseKey_Down {.global.}: DWORD
   var mouseKey_Up {.global.}: DWORD
   var keyboardKey {.global.}: BYTE
-  
+
   # loop
   while true:
     sleep(1)
@@ -349,10 +359,10 @@ proc autoClickThreadProc() {.thread.} =
           mouseKey_Up = mouseEventKeys_Up[toClickKey.mouse]
         elif toClickKey.keyboard != 0:
           keyboardKey = toClickKey.keyboard.BYTE
-    
+
     if not run:
       continue
-    
+
     # Mouse
     if toClickKey.mouse != MouseKeyType.None:
       # down
@@ -374,10 +384,10 @@ proc autoClickThreadProc() {.thread.} =
 # -------------------------------------------------------------------
 # App
 # -------------------------------------------------------------------
-let app = App()
-
 proc main() =
   randomize()
+
+  let app = App()
 
   # Setup channel
   chan_Status.open()
@@ -389,7 +399,7 @@ proc main() =
   # Setup windows hook
   createHook()
   defer: destroyHook()
-  
+
   # Setup GUI
   layout()
   panel.setFocus()

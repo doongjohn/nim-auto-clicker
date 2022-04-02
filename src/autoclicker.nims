@@ -1,9 +1,10 @@
+--define: "release"
 --app: "gui"
 --mm: "orc"
 --threads: "on"
 --opt: "size"
---passL: "-static-libgcc -Wl,-Bstatic -s"
 --excessiveStackTrace: "off"
+--passL: "-static-libgcc -Wl,-Bstatic -s"
 
 when defined(cpu64):
   {.link: "../res/wNim64.res".}
