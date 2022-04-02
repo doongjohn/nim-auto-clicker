@@ -1,9 +1,9 @@
-switch("threads", "on")
-switch("excessiveStackTrace", "off")
-switch("threads", "on")
-switch("opt", "size")
-switch("passL", "-s")
-switch("app", "gui")
+--app: "gui"
+--mm: "orc"
+--threads: "on"
+--opt: "size"
+--passL: "-static-libgcc -Wl,-Bstatic -s"
+--excessiveStackTrace: "off"
 
 when defined(cpu64):
   {.link: "../res/wNim64.res".}
