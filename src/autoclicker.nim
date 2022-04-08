@@ -1,9 +1,9 @@
 {.experimental: "codeReordering".}
 
-import os
-import tables
-import random
-import strformat
+import std/os
+import std/tables
+import std/random
+import std/strformat
 import wkeynames
 import winim
 import wNim/[
@@ -32,21 +32,18 @@ var clickDelay = 20 .. 20
 var clickHoldTime = 30 .. 30
 
 proc hasToClickKey(): bool =
-  return
-    toClickKey.mouse != MouseKeyType.None or
-    toClickKey.keyboard != 0
+  toClickKey.mouse != MouseKeyType.None or
+  toClickKey.keyboard != 0
 
 proc hasKeyConflictMouse(): bool =
-  return
-    triggerKey.mouse != MouseKeyType.None and
-    toClickKey.mouse != MouseKeyType.None and
-    triggerKey.mouse == toClickKey.mouse
+  triggerKey.mouse != MouseKeyType.None and
+  toClickKey.mouse != MouseKeyType.None and
+  triggerKey.mouse == toClickKey.mouse
 
 proc hasKeyConflictKeyboard(): bool =
-  return
-    triggerKey.keyboard != 0 and
-    toClickKey.keyboard != 0 and
-    triggerKey.keyboard == toClickKey.keyboard
+  triggerKey.keyboard != 0 and
+  toClickKey.keyboard != 0 and
+  triggerKey.keyboard == toClickKey.keyboard
 
 
 # -------------------------------------------------------------------
@@ -161,7 +158,7 @@ template updateSpcData(spcMin, spcMax: wSpinCtrl, minmax: Slice[int]) =
   spcMin.setValue(minmax.a)
   spcMax.setValue(minmax.b)
   spcMin.setRange(1 .. minmax.b)
-  spcMax.setRange(minmax.a .. int32.high.int) # 텍스트 박스의 최댓값이 [int32]인가?
+  spcMax.setRange(minmax.a .. int32.high.int) # 텍스트 박스의 최댓값이 int32 인가?
 
 template clampMin(spcMin, spcMax: wSpinCtrl, minmax: var Slice[int], addAmount: int = 0) =
   updateStatus: autoclick = false
@@ -338,17 +335,22 @@ const mouseEventKeys_Up = {
 
 proc autoClickThreadProc() {.thread.} =
   # variables
-  var run {.global.} = true
-  var delay {.global.} = clickDelay
-  var holdTime {.global.} = clickHoldTime
-  var mouseKey_Down {.global.}: DWORD
-  var mouseKey_Up {.global.}: DWORD
-  var keyboardKey {.global.}: BYTE
+  {.push global.}
+  var run = true
+  var delay = clickDelay
+  var holdTime = clickHoldTime
+  var mouseKey_Down: DWORD
+  var mouseKey_Up: DWORD
+  var keyboardKey: BYTE
+  {.pop.}
 
   # loop
   while true:
     sleep(1)
-    let (dataAvailable, msg) = chan_Status.tryRecv()
+    let (
+      dataAvailable,
+      msg
+    ) = chan_Status.tryRecv()
     if dataAvailable:
       run = msg
       if run:
@@ -405,6 +407,8 @@ proc main() =
   panel.setFocus()
   frame.center()
   frame.show()
+
+  # run app
   app.mainLoop()
 
 main()
